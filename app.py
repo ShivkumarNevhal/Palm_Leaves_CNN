@@ -1,9 +1,13 @@
 import streamlit as st
-from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
+import os
+import gdown
+import tensorflow as tf
 
-# Background (same as your code)
+# =========================
+# BACKGROUND
+# =========================
 def set_bg():
     st.markdown("""
     <style>
@@ -31,25 +35,59 @@ def set_bg():
 
 set_bg()
 
-# Models
-model_options = {
-    "CNN Model": "models/best_model.keras",
-    "MobileNet": "models/mobilenet.keras",
-    "ResNet": "models/Resnet_model1.keras"
+# =========================
+# MODEL CONFIG (Google Drive)
+# =========================
+model_configs = {
+    "CNN Model": {
+        "file_id": "https://drive.google.com/file/d/1NiIXUCDw0ZrTCLieIPn3GmyGrNVZbH3L/view?usp=drive_link",
+        "file_name": "cnn_model.keras",
+        "img_size": 224
+    },
+    "MobileNet": {
+        "file_id": "https://drive.google.com/file/d/1Zkqtusi1QMZqgOrEU-PAtuE-197g25Up/view?usp=sharing",
+        "file_name": "mobilenet.keras",
+        "img_size": 224
+    },
+    "ResNet": {
+        "file_id": "https://drive.google.com/file/d/1YUEaZnmxJLyC7DDEU7hNwJfhNp1z4p37/view?usp=drive_link",
+        "file_name": "resnet.keras",
+        "img_size": 224
+    }
 }
 
-selected_model_name = st.selectbox("🔽 Select Model", list(model_options.keys()))
+selected_model_name = st.selectbox("🔽 Select Model", list(model_configs.keys()))
+selected_model_config = model_configs[selected_model_name]
 
+# =========================
+# LOAD MODEL
+# =========================
 @st.cache_resource
-def load_my_model(path):
-    return load_model(path)
+def load_model_from_drive(file_id, file_name):
+    url = f"https://drive.google.com/uc?id={file_id}"
 
-model = load_my_model(model_options[selected_model_name])
+    if not os.path.exists(file_name):
+        with st.spinner(f"⬇️ Downloading {file_name}..."):
+            gdown.download(url, file_name, quiet=False)
 
-# Classes
+    model = tf.keras.models.load_model(file_name)
+    return model
+
+model = load_model_from_drive(
+    selected_model_config["file_id"],
+    selected_model_config["file_name"]
+)
+
+IMG_SIZE = selected_model_config["img_size"]
+
+# =========================
+# CLASS LABELS
+# =========================
 class_names = ['Healthy', 'Boron', 'Kalium', 'Magnesium', 'Nitrogen']
 
-# Title
+# =========================
+# TITLE
+# =========================
 st.markdown("""
 <h1 style="
     text-align: center;
@@ -70,9 +108,8 @@ AI-Based Classification of Nutrient Deficiencies in Palm Leaves 🚀
 """, unsafe_allow_html=True)
 
 # =========================
-# INPUT SECTION (UPDATED)
+# INPUT SECTION
 # =========================
-
 st.subheader("📥 Choose Input Method")
 
 col1, col2 = st.columns(2)
@@ -86,7 +123,7 @@ with col1:
 with col2:
     camera_image = st.camera_input("📷 Capture Image")
 
-# Decide image source
+# Image selection
 image = None
 
 if uploaded_file is not None:
@@ -98,11 +135,10 @@ elif camera_image is not None:
 # =========================
 # PREDICTION
 # =========================
-
 if image is not None:
     st.image(image, caption="Input Image", use_container_width=True)
 
-    img = image.resize((224, 224))
+    img = image.resize((IMG_SIZE, IMG_SIZE))
     img_array = np.array(img) / 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
@@ -112,24 +148,30 @@ if image is not None:
     predicted_class = class_names[pred_index]
     confidence = prediction[0][pred_index] * 100
 
-    # Custom Styled Output (Better than st.success)
+    # Model Info
     st.markdown(f"""
     <div style="background:rgba(0,128,0,0.8); padding:15px; border-radius:10px; margin:10px 0;">
     ✅ Model Used: {selected_model_name}
     </div>
     """, unsafe_allow_html=True)
 
+    # Prediction
     st.markdown(f"""
     <div style="background:rgba(255,140,0,0.9); padding:15px; border-radius:10px; margin:10px 0;">
     🌿 Prediction: {predicted_class}
     </div>
     """, unsafe_allow_html=True)
 
+    # Confidence
     st.markdown(f"""
     <div style="background:rgba(0,102,204,0.9); padding:15px; border-radius:10px; margin:10px 0;">
     📊 Confidence: {confidence:.2f}%
     </div>
     """, unsafe_allow_html=True)
+
+    # Low confidence warning
+    if confidence < 60:
+        st.warning("⚠️ Low confidence prediction. Try a clearer image.")
 
     # Probabilities
     st.subheader("📈 Class Probabilities:")
