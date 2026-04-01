@@ -40,17 +40,17 @@ set_bg()
 # =========================
 model_configs = {
     "CNN Model": {
-        "file_id": "https://drive.google.com/file/d/1NiIXUCDw0ZrTCLieIPn3GmyGrNVZbH3L/view?usp=drive_link",
+        "file_id": "1NiIXUCDw0ZrTCLieIPn3GmyGrNVZbH3L",
         "file_name": "best_model.keras",
         "img_size": 224
     },
     "MobileNet": {
-        "file_id": "https://drive.google.com/file/d/1Zkqtusi1QMZqgOrEU-PAtuE-197g25Up/view?usp=drive_link",
+        "file_id": "1Zkqtusi1QMZqgOrEU-PAtuE-197g25Up",
         "file_name": "MobileNet.keras",
         "img_size": 224
     },
     "ResNet": {
-        "file_id": "https://drive.google.com/file/d/1YUEaZnmxJLyC7DDEU7hNwJfhNp1z4p37/view?usp=drive_link",
+        "file_id": "1YUEaZnmxJLyC7DDEU7hNwJfhNp1z4p37",
         "file_name": "Resnet_model1.keras",
         "img_size": 224
     }
