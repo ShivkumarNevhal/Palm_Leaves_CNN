@@ -45,7 +45,7 @@ model_configs = {
         "img_size": 224
     },
     "MobileNet": {
-        "file_id": "https://drive.google.com/file/d/1Zkqtusi1QMZqgOrEU-PAtuE-197g25Up/view?usp=sharing",
+        "file_id": "https://drive.google.com/file/d/1Zkqtusi1QMZqgOrEU-PAtuE-197g25Up/view?usp=drive_link",
         "file_name": "MobileNet.keras",
         "img_size": 224
     },
