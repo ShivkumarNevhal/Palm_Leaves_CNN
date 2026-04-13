@@ -10,4 +10,4 @@ torch
 torchvision
 torchaudio
 timm
-gdown
+gdown>=4.6.0
