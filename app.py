@@ -69,7 +69,7 @@ def load_model_from_drive(file_id, file_name):
     try:
         if not os.path.exists(file_name):
             with st.spinner(f"⬇️ Downloading {file_name}..."):
-                gdown.download(url, file_name, quiet=False, fuzzy=True)
+                gdown.download(url, file_name, quiet=False)
 
         model = tf.keras.models.load_model(file_name)
         return model
