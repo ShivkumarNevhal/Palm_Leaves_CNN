@@ -184,3 +184,6 @@ if image is not None and model is not None:
     st.subheader("📈 Class Probabilities:")
     for i, prob in enumerate(prediction[0]):
         st.write(f"{class_names[i]}: {prob*100:.2f}%")
+st.markdown(
+    "• This model is trained on a limited dataset and is specifically designed for palm leaf images only."
+)
